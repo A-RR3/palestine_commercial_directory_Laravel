@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Company extends Model
+class CompanyModel extends Model
 {
     use HasFactory;
     
@@ -26,7 +26,7 @@ class Company extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class,'c_category_id','cc_id');
+        return $this->belongsTo(CategoryModel::class,'c_category_id','cc_id');
     }
 
     public function user()

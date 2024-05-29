@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Like extends Model
+class LikeModel extends Model
 {
     use HasFactory;
 
@@ -27,6 +27,6 @@ class Like extends Model
 
     public function post()
     {
-        return $this->belongsTo(Post::class,'l_post_id','p_id');
+        return $this->belongsTo(PostModel::class,'l_post_id','p_id');
     }
 }
