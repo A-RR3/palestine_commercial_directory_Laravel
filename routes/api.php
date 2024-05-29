@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,8 +17,10 @@ use App\Http\Controllers\AuthController;
 */
 
 Route::group(['middleware' => ['auth:sanctum']],function () {
-  
+
 });
 
-Route::post('/auth/register',[AuthController::class,'register']);
-Route::post('/auth/login',[AuthController::class,'loginUser']);
+// Route::post('/auth/register',[AuthController::class,'register']);
+// Route::post('/auth/login',[AuthController::class,'loginUser']);
+
+Route::post('/post', [PostController::class, 'uploadVideoTest']);
