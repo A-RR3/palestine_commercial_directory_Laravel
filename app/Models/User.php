@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Model
+class User extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory,HasApiTokens;
 
     protected $table = 'users';
 
@@ -15,7 +16,9 @@ class User extends Model
 
     protected $fillable = [
         'u_name',
+        'u_name_ar',
         'u_phone',
+        'u_image',
         'password',
         'u_role_id',
         'u_status',
@@ -31,9 +34,39 @@ class User extends Model
         'u_status' => 'boolean',
     ];
 
-    public function role()
+    // public function role()
+    // {
+    //     return $this->hasOne(RolesModel::class);
+    // }
+
+    public function companies()
     {
-        return $this->hasOne(Roles::class);
+        return $this->hasMany(CompanyModel::class,'c_owner_id','u_id');
     }
+
+    public function posts()
+    {
+        return $this->hasMany(PostModel::class);
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(LikeModel::class);
+    }
+
+    // public function tokens()
+    // {
+    //     return $this->hasMany(PersonalAccessToken::class, 'tokenable_id', 'u_id');
+    // }
+
+    // protected static function boot()
+    // {
+    //     parent::boot();
+
+    //     static::deleting(function ($user) {
+    //         // Delete associated access tokens
+    //         $user->tokens()->delete();
+    //     });
+    // }
 
 }

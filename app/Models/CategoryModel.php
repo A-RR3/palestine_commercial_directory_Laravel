@@ -17,9 +17,4 @@ class CategoryModel extends Model
         'cc_name',
     ];
 
-    // public function company()
-    // {
-    //     return $this->hasMany(companies::class);
-    // }
-
 }

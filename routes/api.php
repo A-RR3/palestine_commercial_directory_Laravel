@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,11 +17,36 @@ use App\Http\Controllers\PostController;
 |
 */
 
-Route::group(['middleware' => ['auth:sanctum']],function () {
+Route::group(['middleware' => ['auth:sanctum','setlocale']],function () {
+
+//User
+Route::post('/logout',[AuthController::class,'logout']);
+Route::put('/update/{id}',[AuthController::class,'updateUser']);
+
+//Posts
+Route::get('/posts', [PostController::class, 'index']);
+Route::get('/posts/{id}', [PostController::class, 'show']);
+Route::post('/posts', [PostController::class, 'store']);
+Route::put('/posts/{id}', [PostController::class, 'update']);
+Route::delete('/posts/{id}', [PostController::class, 'destroy']);
+Route::post('/posts/{id}/like', [PostController::class, 'like']);
+Route::post('/posts/{id}/unlike', [PostController::class, 'unlike']);
+
+//Users
+// Route::post('/users', [UserController::class, 'createUser']);
+Route::get('/users', [UserController::class, 'getUsers']);
+Route::get('/users/{id}', [UserController::class, 'getSingleUser']);
+Route::put('/users/{id}', [UserController::class, 'updateUser']);
+Route::post('/users/{id}', [UserController::class, 'deactivateUser']);
+Route::get('users/search/{name}',[UserController::class,'searchUser']);
 
 });
 
-// Route::post('/auth/register',[AuthController::class,'register']);
-// Route::post('/auth/login',[AuthController::class,'loginUser']);
 
+Route::middleware(['setlocale'])->group(function () {
+    Route::post('login', [AuthController::class, 'loginUser']);
+});
+Route::post('/register',[AuthController::class,'register']);
 Route::post('/post', [PostController::class, 'uploadVideoTest']);
+// 
+Route::post('/users', [UserController::class, 'createUser']);

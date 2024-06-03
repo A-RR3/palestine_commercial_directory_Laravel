@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->integer('u_id')->autoIncrement();
-            $table->string('u_name');
-            $table->text('u_phone',30)->unique();
-            $table->string('password');
+            $table->text('u_name');
+            $table->text('u_phone')->unique();
+            $table->text('password');
             $table->integer('u_role_id');
             $table->enum('u_status', [0,1])->default(1);
             $table->rememberToken();
