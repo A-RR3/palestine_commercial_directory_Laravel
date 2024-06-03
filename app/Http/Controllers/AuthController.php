@@ -1,120 +1,67 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+
 
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
-    {
-
-        try {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name' => 'required|string|min:3|max:100',
-                    'phone' => 'required|string|min:3|max:50',
-                    'password' => 'required|string|min:2|max:100|confirmed',
-                    'role' => 'required|integer'
-                ]
-
-            );
-
-            if ($validator->fails()) {
-                return response()->json(
-                    [
-                        'status' => false,
-                        'message' => 'Validation Failed',
-                        'errors' => $validator->errors()
-                    ],
-                    401
-                );
-            }
-            $user = User::create(
-                [
-                    'u_name' => $request->name,
-                    'u_email' => $request->email,
-                    'password' => encrypt($request->password),
-                    'u_role_id' => $request->name
-
-                ]
-            );
-
-            return response()->json(
-                [
-                    'status' => true,
-                    'message' => 'Registration Successfull',
-                    'data' => $user,
-                    'token' => $user->createToken("API TOKEN")->plainTextToken
-                ],
-                200
-            );
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
-    }
-
-
+    
     public function loginUser(Request $request)
     {
         try {
             $validateUser = Validator::make(
                 $request->all(),
                 [
-                    'phone' => 'required|exists:users,phonestring|between:3,50',
+                    'u_phone' => 'required|exists:users,u_phone|string|between:9,50',
                     'password' => 'required|string|min:2|max:100'
                 ]
             );
 
             if ($validateUser->fails()) {
+          
                 return response()->json([
                     'status' => false,
-                    'message' => 'validation error',
+                    'message' => __('auth.invalid_credentials'),
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-            //  $credentials = $request->only('email', 'password');
-            $credentials = $validateUser->validated();
 
-
-            if (!Auth::attempt($credentials)) {
+            if (!Auth::attempt($validateUser->validate())) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'invalid credentials',
+                    'message' => __('auth.incorrect_password'),
                 ], 403);
             }
 
-            //check email
-            // $user = User::where('email', $request->email)->first();
-
             $token = $request->user()->createToken("API-TOKEN")->plainTextToken;
+            // return $request->user()->tokens();
 
             return response()->json([
                 'status' => true,
-                'message' => 'User Logged In Successfully',
+                'message' => __('auth.user_logged_in_successfully'),
                 'user' => auth()->user(),
                 'token' => $token
             ], 200);
 
         } catch (\Throwable $th) {
+           
             return response()->json([
                 'status' => false,
-                'message' => $th->getMessage()
+                'message' => [
+                    __('auth.internal_server_error'),
+                    $th->getMessage()
+                ]
             ], 500);
         }
     }
 
+   
     public function logout(Request $request)
     {
-        // return $request->user();
         $user = $request->user();
 
         if ($user) {
@@ -125,34 +72,4 @@ class AuthController extends Controller
         }
     }
 
-    // update user
-    public function update(Request $request)
-    {
-
-        // return response($request);
-        $validator = Validator::make($request->all(), [
-            'name' => 'string|min:3|max:100',
-            'phone' => 'string|min:3|max:100',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'validation error',
-                'errors' => $validator->errors()->first()
-            ], 401);
-        }
-
-        $user = User::find(auth()->user()->id);
-
-        $user->update([
-            'u_name' => $request->input('name'),
-            'u_phone' => $request->input('phone'),
-        ]);
-
-        return response([
-            'message' => 'User updated.',
-            'user' => $user,
-        ], 200);
-    }
 }

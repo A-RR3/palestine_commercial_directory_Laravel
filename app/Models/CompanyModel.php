@@ -15,11 +15,13 @@ class CompanyModel extends Model
 
     protected $fillable = [
         'c_name',
-        'c_holder_id',
+        'c_name_ar',
+        'c_owner_id',
         'c_category_id',
         'c_phone',
         'c_latitude',
-        'c_longitude'
+        'c_longitude',
+        'c_image'
     ];
 
     public $timestamps = true;
@@ -31,7 +33,7 @@ class CompanyModel extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class,'c_holder_id','u_id');
+        return $this->belongsTo(User::class,'c_owner_id','u_id');
     }
 
 }

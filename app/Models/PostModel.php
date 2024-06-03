@@ -28,4 +28,9 @@ class PostModel extends Model
     {
         return $this->belongsTo(User::class,'p_user_id','u_id');
     }
+
+    public function likes()
+    {
+        return $this->hasMany(LikeModel::class);
+    }
 }
