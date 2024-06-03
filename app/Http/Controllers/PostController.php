@@ -3,45 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\LikeModel;
-use App\Models\Post;
 use App\Models\PostModel;
+use App\Services\FileUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
-    // public function uploadVideoTest(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), []);
-
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'error',
-    //         ]);
-    //     }
-
-    //     $post = new PostModel();
-    //     $post->p_title = 'test';
-    //     $post->p_content = 'test';
-    //     $post->p_user_id = 2;
-
-    //     // upload video
-
-    //     if ($post->save()) {
-    //         return response()->json([
-    //             'status' => true,
-    //             'message' => 'done',
-    //             'post' => $post,
-    //         ]);
-    //     }
-
-    //     return response()->json([
-    //         'status' => false,
-    //         'message' => 'error in adding',
-    //     ]);
-    // }
-
+    
     public function index()
     {
         // return PostModel::all();
@@ -65,6 +34,28 @@ class PostController extends Controller
         $post =  PostModel::where('id', '$id')->withCount('likes')->get();
         if (!$post) {
             return response()->json(['message' => 'Post not found'], 404);
+    protected $fileUploadService;
+
+    // Inject the FileUploadService into the controller
+    public function __construct(FileUploadService $fileUploadService)
+    {
+        $this->fileUploadService = $fileUploadService;
+    }
+
+    public function uploadVideoTest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'video' => 'required|mimes:mp4,mov,avi,flv|max:204800',
+            'title' => 'required',
+            'content' => 'required',
+            'user_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first(),
+            ]);
         }
         print($post);
           return response([
@@ -73,6 +64,15 @@ class PostController extends Controller
           ], 200);
       }
 
+        $post = new PostModel();
+        $post->p_title = $request->input('title');
+        $post->p_content = $request->input('content');
+        $post->p_user_id = $request->input('user_id');
+
+        if ($request->hasFile('video')) {
+            $file_name = $this->fileUploadService->uploadVideo($request->file('video'), 'posts/videos');
+            $post->p_video = $file_name;
+        }
 
     public function store(Request $request)
     {
@@ -95,6 +95,12 @@ class PostController extends Controller
         $post = PostModel::find($id);
         if (!$post) {
             return response()->json(['message' => 'Post not found'], 404);
+        if ($post->save()) {
+            return response()->json([
+                'status' => true,
+                'message' => 'posed added successfully',
+                'post' => $post,
+            ]);
         }
         $post->delete();
         return response()->json(['message' => 'Post deleted']);
@@ -109,6 +115,9 @@ class PostController extends Controller
         $like = LikeModel::create([
             'p_id' => $id,
             'u_id' => $request->user_id
+        return response()->json([
+            'status' => false,
+            'message' => 'error in adding post',
         ]);
 
         return response()->json(['message' => 'Liked'], 200);
