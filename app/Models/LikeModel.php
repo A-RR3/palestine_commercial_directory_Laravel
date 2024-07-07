@@ -17,6 +17,10 @@ class LikeModel extends Model
         'l_post_id',
         'l_user_id',
     ];
+    
+    protected $casts = [
+        'is_liked' => 'boolean',
+    ];
 
     public $timestamps = true;
 

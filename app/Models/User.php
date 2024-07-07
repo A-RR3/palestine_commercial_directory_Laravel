@@ -46,12 +46,17 @@ class User extends Authenticatable
 
     public function posts()
     {
-        return $this->hasMany(PostModel::class);
+        return $this->hasMany(PostModel::class,'p_user_id','u_id');
     }
 
     public function likes()
     {
-        return $this->hasMany(LikeModel::class);
+        return $this->hasMany(LikeModel::class,'l_user_id','u_id');
+    }
+
+    public function device()
+    {
+        return $this->hasMany(DeviceToken::class,'d_user_id','u_id');
     }
 
     // public function tokens()

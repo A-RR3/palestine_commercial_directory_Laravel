@@ -16,6 +16,7 @@ class PostModel extends Model
     protected $fillable = [
         'p_title',
         'p_content',
+        'p_content_ar',
         'p_image',
         'p_video',
         'p_type',
@@ -31,6 +32,6 @@ class PostModel extends Model
 
     public function likes()
     {
-        return $this->hasMany(LikeModel::class);
+        return $this->hasMany(LikeModel::class,'l_post_id','p_id');
     }
 }

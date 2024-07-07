@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 
@@ -17,6 +18,13 @@ use App\Http\Controllers\UserController;
 |
 */
 
+Route::get('/fcm-access-token', [NotificationController::class, 'generateAccessToken']);
+Route::post('/sendNotification', [NotificationController::class, 'sendNotification']);
+Route::delete('/remove-device-token', [NotificationController::class, 'removeDeviceToken']);
+Route::post('/save-device-token', [NotificationController::class, 'saveDeviceToken']);
+Route::post('/update-device-token', [NotificationController::class, 'updateDeviceToken']);
+
+
 Route::group(['middleware' => ['auth:sanctum','setlocale']],function () {
 
 //User
@@ -24,21 +32,25 @@ Route::post('/logout',[AuthController::class,'logout']);
 Route::put('/update/{id}',[AuthController::class,'updateUser']);
 
 //Posts
-Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/{id}', [PostController::class, 'show']);
 Route::post('/posts', [PostController::class, 'store']);
 Route::put('/posts/{id}', [PostController::class, 'update']);
 Route::delete('/posts/{id}', [PostController::class, 'destroy']);
-Route::post('/posts/{id}/like', [PostController::class, 'like']);
-Route::post('/posts/{id}/unlike', [PostController::class, 'unlike']);
+Route::get('/posts/user/{id}', [PostController::class, 'getPostsWithLikeStatus']);
+Route::post('/posts/toggleLike', [PostController::class, 'toggleLike']);
 
 //Users
 // Route::post('/users', [UserController::class, 'createUser']);
 Route::get('/users', [UserController::class, 'getUsers']);
 Route::get('/users/{id}', [UserController::class, 'getSingleUser']);
-Route::put('/users/{id}', [UserController::class, 'updateUser']);
+Route::post('/update', [UserController::class, 'updateUser']);
 Route::post('/users/{id}', [UserController::class, 'deactivateUser']);
 Route::get('users/search/{name}',[UserController::class,'searchUser']);
+
+//Companies 
+Route::get('/companies/{id}', [CompanyController::class, 'getCompanies']);
+Route::get('/categories', [CompanyController::class, 'getCategories']);
+
 
 });
 
@@ -48,5 +60,6 @@ Route::middleware(['setlocale'])->group(function () {
 });
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/post', [PostController::class, 'uploadVideoTest']);
-// 
+
 Route::post('/users', [UserController::class, 'createUser']);
+Route::get('/posts', [PostController::class, 'index']);

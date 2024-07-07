@@ -14,7 +14,7 @@ class FileUploadService
      * @param string $disk
      * @return string The file path
      */
-    public function uploadVideo(UploadedFile $file, $folderPath, $disk = 'public')
+    public function uploadFile(UploadedFile $file, $folderPath, $disk = 'public')
     {
         $extension = $file->getClientOriginalExtension();
         $fileName = time() . '_' . uniqid() . '.' . $extension;
@@ -22,4 +22,6 @@ class FileUploadService
 
         return $fileName;
     }
+
+
 }

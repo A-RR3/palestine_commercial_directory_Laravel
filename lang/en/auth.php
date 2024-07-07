@@ -20,6 +20,7 @@ return [
     'user_logged_in_successfully' => 'User Logged In Successfully',
     'invalid_credentials' => 'Invalid Credentials',
     'incorrect_password' => 'Incorrect Password',
-    'internal_server_error' => 'Internal Server Error'
+    'internal_server_error' => 'Internal Server Error',
+
 
 ];
